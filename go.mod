@@ -1,3 +1,3 @@
-module github.com/kuhweide/bwlib
+module github.com/kuhweide/gobwlib
 
 go 1.26.2
