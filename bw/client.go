@@ -10,7 +10,7 @@ import (
 	"strings"
 )
 
-type client struct {
+type Client struct {
 	env           map[string]string
 	sessionRegexp *regexp.Regexp
 }
