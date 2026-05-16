@@ -15,7 +15,7 @@ type Client struct {
 	sessionRegexp *regexp.Regexp
 }
 
-func NewClient(serverUrl string, email string, password string) (*client, error) {
+func NewClient(serverUrl string, email string, password string) (*Client, error) {
 	homeDir, err := os.UserHomeDir()
 	if err != nil {
 		log.Fatal(err)
@@ -28,7 +28,7 @@ func NewClient(serverUrl string, email string, password string) (*client, error)
 
 	appDataDir := fmt.Sprintf("%s/.kuhweide/go-bw-lib/%s", homeDir, appDataDirName)
 
-	client := &client{}
+	client := &Client{}
 
 	client.env = map[string]string{"BITWARDENCLI_APPDATA_DIR": appDataDir}
 	client.sessionRegexp = regexp.MustCompile(`BW_SESSION="(\S+?)"`)
@@ -82,7 +82,7 @@ func NewClient(serverUrl string, email string, password string) (*client, error)
 	return client, nil
 }
 
-func (client *client) generateEnv() []string {
+func (client *Client) generateEnv() []string {
 	env := make([]string, 0)
 
 	for key, value := range client.env {
@@ -92,7 +92,7 @@ func (client *client) generateEnv() []string {
 	return env
 }
 
-func (client *client) command(arg ...string) (string, error) {
+func (client *Client) command(arg ...string) (string, error) {
 	cmd := exec.Command("bw", arg...)
 	cmd.Env = client.generateEnv()
 
@@ -105,7 +105,7 @@ func (client *client) command(arg ...string) (string, error) {
 	return strings.TrimSpace(string(out[:])), nil
 }
 
-func (client *client) commandWithPipedInput(input string, arg ...string) (string, error) {
+func (client *Client) commandWithPipedInput(input string, arg ...string) (string, error) {
 	cmd := exec.Command("bw", arg...)
 	cmd.Env = client.generateEnv()
 	cmd.Stdin = strings.NewReader(input)
@@ -119,7 +119,7 @@ func (client *client) commandWithPipedInput(input string, arg ...string) (string
 	return strings.TrimSpace(string(out[:])), nil
 }
 
-func (client *client) Login(email string, password string) error {
+func (client *Client) Login(email string, password string) error {
 	out, err := client.command("login", email, password)
 
 	if err != nil {
@@ -133,7 +133,7 @@ func (client *client) Login(email string, password string) error {
 	return nil
 }
 
-func (client *client) Unlock(password string) error {
+func (client *Client) Unlock(password string) error {
 	out, err := client.command("unlock", password)
 
 	if err != nil {
@@ -147,7 +147,7 @@ func (client *client) Unlock(password string) error {
 	return nil
 }
 
-func (client *client) Logout() error {
+func (client *Client) Logout() error {
 	_, err := client.command("logout")
 
 	if err != nil {
@@ -159,7 +159,7 @@ func (client *client) Logout() error {
 	return nil
 }
 
-func (client *client) SetServerUrl(server string) error {
+func (client *Client) SetServerUrl(server string) error {
 	_, err := client.command("config", "server", server)
 
 	if err != nil {
@@ -171,7 +171,7 @@ func (client *client) SetServerUrl(server string) error {
 	return nil
 }
 
-func (client *client) Status() (*clientStatus, error) {
+func (client *Client) Status() (*clientStatus, error) {
 	out, err := client.command("status")
 
 	if err != nil {
@@ -195,7 +195,7 @@ func (client *client) Status() (*clientStatus, error) {
 	return clientStatus, nil
 }
 
-func (client *client) Sync() error {
+func (client *Client) Sync() error {
 	_, err := client.command("sync")
 
 	if err != nil {
@@ -207,7 +207,7 @@ func (client *client) Sync() error {
 	return nil
 }
 
-func (client *client) Encode(s string) (string, error) {
+func (client *Client) Encode(s string) (string, error) {
 	out, err := client.commandWithPipedInput(s, "encode")
 
 	if err != nil {
@@ -219,7 +219,7 @@ func (client *client) Encode(s string) (string, error) {
 	return out, nil
 }
 
-func (client *client) CreateItem(newItem *item) (*item, error) {
+func (client *Client) CreateItem(newItem *item) (*item, error) {
 	data, err := json.Marshal(newItem)
 	if err != nil {
 		err := fmt.Errorf("Failed create item because generating json failed. err=%w", err)
@@ -252,7 +252,7 @@ func (client *client) CreateItem(newItem *item) (*item, error) {
 	return createdItem, nil
 }
 
-func (client *client) Item(id string) (*item, error) {
+func (client *Client) Item(id string) (*item, error) {
 	item := &item{}
 
 	out, err := client.command("get", "item", id)
@@ -268,7 +268,7 @@ func (client *client) Item(id string) (*item, error) {
 	return item, nil
 }
 
-func (client *client) Items() ([]item, error) {
+func (client *Client) Items() ([]item, error) {
 	var items []item
 
 	out, err := client.command("list", "items")
