@@ -1,4 +1,4 @@
-# go-bw-lib
+# gobwlib
 Library to use bitwarden-cli functionality in go. The library acts as a wrapper around the bitwarden-cli. For more information on the cli check out: [bitwarden-cli](https://bitwarden.com/help/cli/).
 
 ## Attention
@@ -15,7 +15,7 @@ package main
 import (
 	"fmt"
 
-	"github.com/kuhweide/bwlib/bw"
+	"github.com/kuhweide/gobwlib/bw"
 )
 
 func main() {
